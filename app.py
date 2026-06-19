@@ -6,13 +6,13 @@ st.set_page_config(page_title="منظم المسلسلات", page_icon="🎬", l
 st.title("🎬 برنامج تنظيم وترتيب المسلسلات")
 st.write("تابع مسلسلاتك المفضلة وسجل تقدمك في المشاهدة بسهولة!")
 
-# إنشاء قاعدة بيانات وهمية في الجلسة (Session State) لحفظ البيانات مؤقتاً
+# إنشاء قاعدة بيانات وهمية في الجلسة لحفظ البيانات مؤقتاً
 if 'series_db' not in st.session_state:
     st.session_state.series_db = pd.DataFrame(columns=[
         "اسم المسلسل", "إجمالي الحلقات", "الحلقة الحالية", "حالة المشاهدة"
     ])
 
-# --- قسم إضافة مسلسل جديد ---
+# قسم إضافة مسلسل جديد
 st.subheader("➕ إضافة مسلسل جديد")
 col1, col2, col3, col4 = st.columns(4)
 
@@ -27,7 +27,6 @@ with col4:
 
 if st.button("إضافة إلى القائمة"):
     if name:
-        # التحقق من عدم تكرار الاسم
         if name in st.session_state.series_db["اسم المسلسل"].values:
             st.warning("هذا المسلسل موجود بالفعل في القائمة!")
         else:
@@ -42,16 +41,13 @@ if st.button("إضافة إلى القائمة"):
     else:
         st.error("الرجاء إدخال اسم المسلسل.")
 
----
-
-# --- قسم عرض وإدارة المسلسلات ---
+# قسم عرض وإدارة المسلسلات
 st.subheader("📋 قائمة مسلسلاتك")
 
 if not st.session_state.series_db.empty:
-    # عرض البيانات في جدول تفاعلي يسمح بالتعديل المباشر
     edited_df = st.data_editor(
         st.session_state.series_db,
-        num_rows="dynamic", # يتيح للمستخدم حذف صفوف أيضاً
+        num_rows="dynamic",
         column_config={
             "حالة المشاهدة": st.column_config.SelectboxColumn(
                 options=["لم أبدأ بعد", "جاري المشاهدة", "تمت المشاهدة بالكامل"]
@@ -59,9 +55,7 @@ if not st.session_state.series_db.empty:
         },
         use_container_width=True
     )
-    # تحديث البيانات بناءً على التعديلات في الجدول
     st.session_state.series_db = edited_df
-    
     st.info("💡 يمكنك تعديل الحلقات أو الحالة مباشرة من الجدول أعلاه، أو تحديد الصف والضغط على Delete لحذفه.")
 else:
     st.write("قائمتك فارغة حالياً. أضف مسلسلك الأول في الأعلى! 🍿")
